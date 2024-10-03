@@ -1,4 +1,5 @@
 import React from 'react';
+import { isCourseConflicting } from '../utilities/timeConflicts';
 
 const CourseList = ({ courses, selectedCourses, toggleCourseSelection }) => (
   <div className="container mt-5">
@@ -6,15 +7,16 @@ const CourseList = ({ courses, selectedCourses, toggleCourseSelection }) => (
       {Object.keys(courses).map(courseKey => {
         const course = courses[courseKey];
         const isSelected = selectedCourses.includes(courseKey);
+        const isConflicting = !isSelected && isCourseConflicting(course, selectedCourses, courses);
 
         return (
           <div
             key={courseKey}
-            className={`col-md-3 mb-4 ${isSelected ? 'selected-course' : ''}`}
-            onClick={() => toggleCourseSelection(courseKey)}
-            style={{ cursor: 'pointer' }}
+            className={`col-md-3 mb-4 ${isSelected ? 'selected-course' : ''} ${isConflicting ? 'disabled-course' : ''}`}
+            onClick={() => !isConflicting && toggleCourseSelection(courseKey)}
+            style={{ cursor: isConflicting ? 'not-allowed' : 'pointer' }}
           >
-            <div className={`card h-100 ${isSelected ? 'bg-success text-white' : ''}`}
+            <div className={`card h-100 ${isSelected ? 'bg-success text-white' : ''} ${isConflicting ? 'bg-danger text-white' : ''}`}
               style={{ transition: 'box-shadow 0.3s ease' }}
             >
               <div className="card-body">
@@ -24,6 +26,7 @@ const CourseList = ({ courses, selectedCourses, toggleCourseSelection }) => (
               <div className="card-footer text-muted">
                 {course.meets}
                 {isSelected && <i className="bi bi-check-circle ms-2"></i>}
+                {isConflicting && <span className="text-white ms-2">x</span>}
               </div>
             </div>
           </div>
