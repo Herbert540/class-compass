@@ -4,6 +4,7 @@ import CourseForm from './CourseForm';
 
 const CourseList = ({ courses, selectedCourses, toggleCourseSelection }) => {
   const [editingCourse, setEditingCourse] = useState(null);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const handleEdit = (course) => {
     setEditingCourse(course);
@@ -13,12 +14,23 @@ const CourseList = ({ courses, selectedCourses, toggleCourseSelection }) => {
     setEditingCourse(null);
   };
 
+  const handleSubmit = () => {
+    setFormSubmitted(true);
+    setEditingCourse(null);
+    setTimeout(() => setFormSubmitted(false), 3000);
+  };
+
   return (
     <div className="container mt-5">
+      {formSubmitted && (
+        <div className="alert alert-success" role="alert">
+          Form submitted successfully!
+        </div>
+      )}
       <div className="row">
         {editingCourse ? (
           <div className="col-12">
-            <CourseForm course={editingCourse} onCancel={handleCancel} />
+            <CourseForm course={editingCourse} onCancel={handleCancel} onSubmit={handleSubmit} />
           </div>
         ) : (
           Object.keys(courses).map(courseKey => {
@@ -57,7 +69,6 @@ const CourseList = ({ courses, selectedCourses, toggleCourseSelection }) => {
                       <i className="bi bi-pencil-square"></i> Edit
                     </button>
                   </div>
-
                 </div>
               </div>
             );
