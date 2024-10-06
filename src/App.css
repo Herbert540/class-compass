@@ -5,3 +5,7 @@
 .selected-course:hover .card {
     background-color: #c3e6cb;
 }
+
+.edit-link:hover {
+    text-decoration: underline;
+  }
