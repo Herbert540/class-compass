@@ -3,20 +3,20 @@ import { isCourseConflicting } from '../utilities/timeConflicts';
 import CourseForm from './CourseForm';
 
 const CourseList = ({ courses, selectedCourses, toggleCourseSelection }) => {
-  const [editingCourse, setEditingCourse] = useState(null);
+  const [editingCourseKey, setEditingCourseKey] = useState(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  const handleEdit = (course) => {
-    setEditingCourse(course);
+  const handleEdit = (courseKey) => {
+    setEditingCourseKey(courseKey);
   };
 
   const handleCancel = () => {
-    setEditingCourse(null);
+    setEditingCourseKey(null);
   };
 
   const handleSubmit = () => {
     setFormSubmitted(true);
-    setEditingCourse(null);
+    setEditingCourseKey(null);
     setTimeout(() => setFormSubmitted(false), 3000);
   };
 
@@ -28,9 +28,14 @@ const CourseList = ({ courses, selectedCourses, toggleCourseSelection }) => {
         </div>
       )}
       <div className="row">
-        {editingCourse ? (
+        {editingCourseKey ? (
           <div className="col-12">
-            <CourseForm course={editingCourse} onCancel={handleCancel} onSubmit={handleSubmit} />
+            <CourseForm
+              courseKey={editingCourseKey}
+              course={courses[editingCourseKey]}
+              onCancel={handleCancel}
+              onSubmit={handleSubmit}
+            />
           </div>
         ) : (
           Object.keys(courses).map(courseKey => {
@@ -63,7 +68,7 @@ const CourseList = ({ courses, selectedCourses, toggleCourseSelection }) => {
                       className="btn btn-secondary btn-sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleEdit(course);
+                        handleEdit(courseKey);
                       }}
                     >
                       <i className="bi bi-pencil-square"></i> Edit

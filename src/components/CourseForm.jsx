@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDbUpdate } from '../utilities/firebase';
 
-const CourseForm = ({ course, onCancel, onSubmit }) => {
+const CourseForm = ({ courseKey, course, onCancel, onSubmit }) => {
   const [title, setTitle] = useState(course.title || '');
   const [meets, setMeets] = useState(course.meets || '');
   const [errors, setErrors] = useState({});
+  const [isChanged, setIsChanged] = useState(false);
+  const [updateData, result] = useDbUpdate(`/courses/${courseKey}`);
 
   const meetingTimePattern = /^[MTWFS]+ \d{1,2}:\d{2}-\d{1,2}:\d{2}$/;
 
@@ -22,10 +25,21 @@ const CourseForm = ({ course, onCancel, onSubmit }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Compare initial course data with current form state to track changes
+  useEffect(() => {
+    if (title !== course.title || meets !== course.meets) {
+      setIsChanged(true);
+    } else {
+      setIsChanged(false);
+    }
+  }, [title, meets, course.title, course.meets]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      onSubmit();
+      const updatedCourse = { title, meets };
+      updateData(updatedCourse); 
+      onSubmit(); 
     }
   };
 
@@ -56,8 +70,10 @@ const CourseForm = ({ course, onCancel, onSubmit }) => {
         />
         {errors.meets && <div className="invalid-feedback">{errors.meets}</div>}
       </div>
-
-      <button type="submit" className="btn btn-success me-2">Submit</button>
+      
+      <button type="submit" className="btn btn-success me-2" disabled={!isChanged}>
+        Submit
+      </button>
       <button type="button" className="btn btn-danger" onClick={onCancel}>Cancel</button>
     </form>
   );

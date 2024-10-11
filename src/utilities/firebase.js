@@ -47,7 +47,7 @@ export const useDbUpdate = (path) => {
     update(dbRef, value)
       .then(() => setResult({ timestamp: Date.now(), error: null, message: `Updated successfully at ${new Date().toLocaleString()}` }))
       .catch((error) => setResult({ timestamp: Date.now(), error, message: error.message }));
-  }, [path]);
+  }, [database, path]);
 
   return [updateData, result];
 };
