@@ -3,7 +3,7 @@ import TermSelector from './TermSelector';
 import CourseList from './CourseList';
 import ScheduleModal from './ScheduleModal';
 
-const TermPage = ({ courses }) => {
+const TermPage = ({ courses, user }) => {
     const [selectedTerm, setSelectedTerm] = useState('Fall');
     const [selectedCourses, setSelectedCourses] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,6 +48,7 @@ const TermPage = ({ courses }) => {
                 courses={filteredCourses}
                 selectedCourses={selectedCourses}
                 toggleCourseSelection={toggleCourseSelection}
+                user={user}
             />
             <ScheduleModal
                 isOpen={isModalOpen}
