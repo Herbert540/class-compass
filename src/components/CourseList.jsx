@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { isCourseConflicting } from '../utilities/timeConflicts';
 import CourseForm from './CourseForm';
 
-const CourseList = ({ courses, selectedCourses, toggleCourseSelection, user }) => {
+const CourseList = ({ courses, selectedCourses, toggleCourseSelection, user, isAdmin }) => {
   const [editingCourseKey, setEditingCourseKey] = useState(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
@@ -63,7 +63,7 @@ const CourseList = ({ courses, selectedCourses, toggleCourseSelection, user }) =
                       {isSelected && <i className="bi bi-check-circle ms-2"></i>}
                       {isConflicting && <span className="text-white ms-2">x</span>}
                     </span>
-                    {user && (  // Only show edit button if user is authenticated
+                    {user && isAdmin && (  // Only show edit button if user is authenticated and is an admin
                       <button
                         type="button"
                         className="btn btn-secondary btn-sm"

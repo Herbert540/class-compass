@@ -4,7 +4,7 @@ import Banner from './components/Banner';
 import TermPage from './components/TermPage';
 import StatusMessage from './components/StatusMessage';
 import AuthForm from './components/AuthForm';
-import { useDbData, auth, signOut, onAuthStateChanged } from './utilities/firebase';
+import { useDbData, auth, signOut, onAuthStateChanged, isAdmin } from './utilities/firebase';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -14,12 +14,20 @@ const queryClient = new QueryClient();
 const App = () => {
   const { data, error, isLoading } = useDbData('/');
   const [user, setUser] = useState(null);
+  const [isUserAdmin, setIsUserAdmin] = useState(false);
   const [showAuthForm, setShowAuthForm] = useState(false);
 
   // Track authentication state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user); 
+      if (user) {
+        const adminStatus = await isAdmin(user.uid);  // Check if the user is an admin
+        setIsUserAdmin(adminStatus);
+        // console.log(`User admin status: ${adminStatus}`);
+      } else {
+        setIsUserAdmin(false);
+      }
     });
     return unsubscribe;
   }, []);
@@ -48,7 +56,7 @@ const App = () => {
           onSignIn={() => setShowAuthForm(true)}
           onSignOut={handleSignOut}
         />
-        <TermPage courses={data.courses} user={user} />
+        <TermPage courses={data.courses} user={user} isAdmin={isUserAdmin} />
         {showAuthForm && (
           <div className="auth-modal">
             <AuthForm

@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, onValue, update } from 'firebase/database';
+import { getDatabase, ref, onValue, update, get } from 'firebase/database';
 import { useState, useEffect, useCallback } from 'react';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 
@@ -20,6 +20,13 @@ const auth = getAuth(app);
 const database = getDatabase(app);
 
 export { auth, database, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged };
+
+// Function to check if the user is an admin
+export const isAdmin = async (uid) => {
+  const adminRef = ref(database, `admins/${uid}`);
+  const snapshot = await get(adminRef);
+  return snapshot.exists(); 
+};
 
 export const useDbData = (path) => {
   const [data, setData] = useState(null);
